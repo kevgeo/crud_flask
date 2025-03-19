@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Posts List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+        }
+        .pagination li {
+            margin-right: 5px;
+        }
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+        .pagination .active {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #4CAF50;
+        }
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+        .disabled {
+            color: #aaa;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Posts</h1>
+
+    <div class="per-page-selector">
+        <form method="get">
+            <label for="per_page">Items per page:</label>
+            <select id="per_page" name="per_page" onchange="this.form.submit()">
+                <option value="2" {% if pagination.per_page == 2 %}selected{% endif %}>2</option>
+                <option value="5" {% if pagination.per_page == 5 %}selected{% endif %}>5</option>
+                <option value="10" {% if pagination.per_page == 10 %}selected{% endif %}>10</option>
+                <option value="20" {% if pagination.per_page == 20 %}selected{% endif %}>20</option>
+            </select>
+            <input type="hidden" name="page" value="{{ pagination.page }}">
+        </form>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in posts %}
+            <tr>
+                <td>{{ post.id }}</td>
+                <td>{{ post.title }}</td>
+                <td>{{ post.content }}</td>
+                <td>{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</td>           
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="pagination-container">
+        <ul class="pagination">
+            <!-- Previous page button -->
+            {% if pagination.has_prev %}
+                <li><a href="{{ url_for('main.get_posts', page=pagination.prev_num, per_page=pagination.per_page) }}">&laquo; Previous</a></li>
+            {% else %}
+                <li><span class="disabled">&laquo; Previous</span></li>
+            {% endif %}
+            
+            <!-- Page numbers -->
+            {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                {% if page_num %}
+                    {% if page_num == pagination.page %}
+                        <li><span class="active">{{ page_num }}</span></li>
+                    {% else %}
+                    <li><a href="{{ url_for('main.get_posts', page=page_num, per_page=pagination.per_page) }}">{{ page_num }}</a></li>
+                    {% endif %}
+                {% else %}
+                    <li><span class="ellipsis">...</span></li>
+                {% endif %}
+            {% endfor %}
+            
+            <!-- Next page button -->
+            {% if pagination.has_next %}
+            <li><a href="{{ url_for('main.get_posts', page=pagination.next_num, per_page=pagination.per_page) }}">Next &raquo;</a></li>
+            {% else %}
+            <li><span class="disabled">Next &raquo;</span></li>
+            {% endif %}
+        </ul>
+    </div>
+    
+    <div>
+        <p>Showing {{ posts|length }} of {{ pagination.total }} posts</p>
+    </div>
+
+    <a href="{{ url_for('main.create_post_form') }}" class="btn" style="background-color: #2196F3; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px; display: inline-block;">Create Post</a>
+    <a href="{{ url_for('main.delete_post_form') }}" class="btn" style="background-color: #2196F3; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px; display: inline-block;">Delete Post</a>
+    <a href="{{ url_for('main.update_post_form') }}" class="btn" style="background-color: #2196F3; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px; display: inline-block;">Update Post</a>
+
+
+    <a> <button id="deleteDuplicatesBtn" class="btn" style="border: none; background-color: #2196F3; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px; display: inline-block;">Delete Duplicate Posts</button> </a>
+
+    <script>
+    document.getElementById('deleteDuplicatesBtn').addEventListener('click', function() {
+      if (confirm('Are you sure you want to delete duplicate posts?')) {
+        fetch('{{ url_for('main.deduplicate') }}', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => {
+          if (response.redirected) {
+            window.location.href = response.url;
+          } else {
+            return response.json();
+          }
+        })
+        .then(data => {
+          if (data) {
+            console.log('Response:', data);
+            // Optionally reload the page or show a success message
+            window.location.reload();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting duplicates.');
+        });
+      }
+    });
+    </script>
+    
+
+
+
+    <a href="{{ url_for('main.home') }}" class="btn" style="background-color: #2196F3; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px; display: inline-block;">Homepage</a>
+</body>
+</html>

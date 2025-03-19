@@ -1,0 +1,127 @@
+curl http://127.0.0.1:5000/api/users
+
+--- retrive particular user info (GET Request)
+curl http://127.0.0.1:5000/api/users/3
+
+--- create new user (POST Request)
+curl -X POST \
+  http://127.0.0.1:5000/api/users \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "testuser",
+    "email": "testuser@example.com"
+}'
+
+
+curl -X POST \
+  http://127.0.0.1:5000/api/users \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "testuser5",
+    "email": "testuser5@example.com"
+}'
+
+--- update user info(PUT Request)
+curl -X PUT \
+  http://127.0.0.1:5000/api/users/7 \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "bobJAcai"
+  }'
+
+--- delete user info(DELETE Request)
+curl -X DELETE http://127.0.0.1:5000/api/users/2
+
+------------------------------------- Posts ---------------------------
+--- display all posts paginated(GET Request)
+CURL -X GET http://127.0.0.1:5000/api/posts
+
+--- display particular post(GET Request)
+CURL -X GET http://127.0.0.1:5000/api/posts/4
+
+--- create a post(POST Request)
+CURL -X POST \
+    http://127.0.0.1:5000/api/posts \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "title": "Hello fells",
+      "content": "Jimmy ate jam",
+      "user_id": 5
+    }'
+
+
+--- update post (PUT Request)
+curl -X PUT \
+    http://127.0.0.1:5000/api/posts/1 \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "title": "Hello fells again!"
+    }'
+
+
+--- delete post (DELETE Request)
+CURL -X DELETE http://127.0.0.1:5000/api/posts/1
+
+
+
+I want to check for duplicate posts!
+Basically same title and content!
+
+
+
+
+---- create duplicate posts -------
+--- create a post(POST Request)
+CURL -X POST \
+    http://127.0.0.1:5000/api/posts \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "title": "ola Amigo",
+      "content": "lets be friends",
+      "user_id": 7
+    }'
+
+
+CURL -X POST \
+    http://127.0.0.1:5000/api/posts \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "title": "ola Amigo",
+      "content": "lets be friends",
+      "user_id": 11
+    }'
+
+
+
+CURL -X POST \
+    http://127.0.0.1:5000/api/posts \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "title": "ola Amigo",
+      "content": "lets be friends",
+      "user_id": 5
+    }'
+
+-curl request to call deduplicate api
+CURL -X GET http://127.0.0.1:5000/api/deleteDuplicates 
+CURL http://127.0.0.1:5000/api/deleteDuplicates
+CURL -X DELETE http://127.0.0.1:5000/api/deleteDuplicates
+
+
+
+-------------------------------------------------------------------------
+{
+    "error": "(psycopg2.errors.UniqueViolation) 
+    duplicate key value violates unique constraint \"posts_pkey\"\nDETAIL:  
+    Key (id)=(6) already exists.\n\n[SQL: INSERT INTO posts (title, content, created_at, user_id) VALUES (%(title)s, %(content)s, %(created_at)s, %(user_id)s) RETURNING posts.id]\n[parameters: {'title': 'ola Amigo', 'content': 'lets be friends', 'created_at': datetime.datetime(2025, 3, 15, 18, 17, 22, 964784), 'user_id': 5}]\n(Background on this error at: https://sqlalche.me/e/20/gkpj)"
+}
+
+
+
+<a href="{{ url_for('main.update_post_form', post_id=post.id) }}" class="btn" style="background-color: #2196F3; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px; display: inline-block;">Update</a>
+<a href="{{ url_for('main.delete_post_form', post_id=post.id) }}" class="btn" style="background-color: #f44336; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; display: inline-block;">Delete</a>
+
+
+
+
+    <a type="submit" class="btn" style="background-color: #2196F3; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px; display: inline-block;">Create</a>    
