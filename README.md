@@ -6,7 +6,7 @@ To start, first install required dependencies with the following command
 
 `pip3 install -r requirements.txt`
 
-[Install Postgres](https://www.postgresql.org/download/) and setup database server with username and password credentials. For instructions to install,
+[Install Postgres](https://www.postgresql.org/download/) and setup database server with username and password credentials.
 
 Create a .env(hidden file) which will store your database credentials. Example format like below
 ```
