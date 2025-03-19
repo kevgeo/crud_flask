@@ -54,17 +54,21 @@
   <form method="POST" action="{{ url_for('main.create_user') }}">
     <div class="form-group">
       <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required minlength="5">
+      <input type="text" id="username" name="username" required minlength="5" value="{{ form_data.username if form_data else '' }}">
     </div>
 
     <div class="form-group">
         <label for="Email">Email:</label>
-        <input type="text" id="Email" name="Email" required>
+        <input type="text" id="Email" name="Email" required minlength="5" value="{{ form_data.email if form_data else '' }}">
     </div>
   
     <button type="submit" class="btn" style="background-color: #2196F3; color: white; padding: 5px 10px; text-decoration: none; border-radius: 4px; margin-right: 5px; border: none; cursor: pointer;">Create User</button>
 
     <a href="{{ url_for('main.get_users') }}" class="cancel-link">Cancel</a>
+    <br><br>
+    {% if field_error %}
+    <span class="error-message">{{ field_error }}</span>
+    {% endif %}
 
 </form>
 </body>

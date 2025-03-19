@@ -96,7 +96,9 @@ def create_user():
         return jsonify({"error": str(e)}), 400
     except IntegrityError:
         db.session.rollback()
-        return jsonify({"error": "Username or email already exists"}), 400
+        #return jsonify({"error": "Username or email already exists"}), 400
+        field_error = "Username or email already exists"
+        return render_template('create_user.html', field_error=field_error, form_data=data)
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
