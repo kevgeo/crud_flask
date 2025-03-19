@@ -21,6 +21,6 @@ Then create the tables in Postgres by running
 
 `python3 create_tables.py`
 
-Finally run the server by running below command and experiment with the website at `http://127.0.0.1:8000/api/home`
+Finally run the server by running below command and experiment with the website at [http://127.0.0.1:8000/api/home](http://127.0.0.1:8000/api/home)
 
 `python3 -m gunicorn "app:create_app()"`
