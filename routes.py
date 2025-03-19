@@ -101,13 +101,19 @@ def create_user():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+@main.route('/api/update_user_form<int:user_id>', methods=['GET'])
+def update_user_form2(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('update_user.html', user=user)
+
 @main.route('/api/update_user_form', methods=['GET'])
 def update_user_form():
-    return render_template('update_user.html')
+    user = User.query.get_or_404(user_id)
+    return render_template('update_user.html', user=user)
 
 @main.route('/api/users/update_u', methods=['POST'])
 def update_user():
-    user_id = request.form.get('user_id')
+    user_id = request.form.get('user_id') 
     username = request.form.get('username')
     user = User.query.get_or_404(user_id)
 
@@ -169,7 +175,7 @@ def delete_user_form():
 
 @main.route('/api/users/delete_u', methods=['POST'])
 def delete_user():
-    user_id = request.form.get('user_id')
+    #user_id = request.form.get('user_id')
     user = User.query.get_or_404(user_id)
     
     try:
@@ -182,6 +188,21 @@ def delete_user():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+
+@main.route('/api/users/delete_u<int:user_id>', methods=['POST'])
+def delete_user_list_item(user_id):
+    #user_id = request.form.get('user_id')
+    user = User.query.get_or_404(user_id)
+    
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        flash("Post deleted successfully")        
+        return redirect(url_for('main.get_users'))
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 # @main.route('/api/users/<int:user_id>', methods=['DELETE'])
 # def delete_user(user_id):
 #     user = User.query.get_or_404(user_id)
@@ -236,7 +257,8 @@ def get_post(post_id):
 # Display form to create a new post
 @main.route('/api/create_post_form', methods=['GET'])
 def create_post_form():
-    return render_template('create_post.html')
+    users = User.query.all()
+    return render_template('create_post.html', users=users)
 
 @main.route('/api/posts', methods=['POST'])
 def create_post():
@@ -282,6 +304,11 @@ def create_post():
 @main.route('/api/update_post_form', methods=['GET'])
 def update_post_form():
     return render_template('update_post.html')
+
+@main.route('/api/update_post_form<int:post_id>', methods=['GET'])
+def update_post_form2(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('update_post.html', post=post)
 
 @main.route('/api/posts/update_p', methods=['POST'])
 def update_post():
@@ -347,6 +374,20 @@ def delete_post():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+@main.route('/api/posts/delete_p<int:post_id>', methods=['POST'])
+def delete_post_list_item(post_id):
+    #user_id = request.form.get('user_id')
+    post = Post.query.get_or_404(post_id)
+    
+    try:
+        db.session.delete(post)
+        db.session.commit()
+        flash("Post deleted successfully")        
+        return redirect(url_for('main.get_posts'))
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 # @main.route('/api/posts/<int:post_id>', methods=['DELETE'])
 # def delete_post(post_id):
 #     post = Post.query.get_or_404(post_id)
